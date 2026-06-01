@@ -12,11 +12,11 @@
   },
   "scripts": {
     "start": "npm run development",
-    "development": "NODE_ENV=development concurrently --kill-others \"npm run client\" \"npm run server\"",
-    "production": "npm run build && NODE_ENV=production npm run server",
+    "development": "set NODE_ENV=development&& set NODE_OPTIONS=--openssl-legacy-provider&& concurrently --kill-others \"npm run client\" \"npm run server\"",
+    "production": "npm run build && set NODE_ENV=production&& npm run server",
     "server": "node server/server.js",
-    "client": "react-scripts start",
-    "build": "react-scripts build",
+    "client": "set NODE_OPTIONS=--openssl-legacy-provider&& react-scripts start",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider&& react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

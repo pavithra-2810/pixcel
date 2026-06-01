@@ -3,36 +3,71 @@ const path = require("path");
 
 const app = express();
 
-// A test route to make sure the server is up.
+// Load movies data
+const movies = require("./movies_metadata.json");
+
+// Test route
 app.get("/api/ping", (request, response) => {
   console.log("❇️ Received GET request to /api/ping");
   response.send("pong!");
 });
 
-// A mock route to return some data.
+// Get all movies
 app.get("/api/movies", (request, response) => {
   console.log("❇️ Received GET request to /api/movies");
-  response.json({ data: [{ id: 1, name: '1' }, { id: 2, name: '2' }] });
+
+  response.json({
+    data: movies
+  });
+});
+
+// Get movie by ID
+app.get("/api/movies/:id", (request, response) => {
+  console.log(
+    `❇️ Received GET request to /api/movies/${request.params.id}`
+  );
+
+  const movie = movies.find(
+    movie => String(movie.id) === request.params.id
+  );
+
+  if (!movie) {
+    return response.status(404).json({
+      message: "Movie not found"
+    });
+  }
+
+  response.json(movie);
 });
 
 // Express port-switching logic
 let port;
+
 console.log("❇️ NODE_ENV is", process.env.NODE_ENV);
+
 if (process.env.NODE_ENV === "production") {
   port = process.env.PORT || 3000;
+
   app.use(express.static(path.join(__dirname, "../build")));
+
   app.get("*", (request, response) => {
-    response.sendFile(path.join(__dirname, "../build", "index.html"));
+    response.sendFile(
+      path.join(__dirname, "../build", "index.html")
+    );
   });
 } else {
   port = 3001;
+
   console.log("⚠️ Not seeing your changes as you develop?");
   console.log(
     "⚠️ Do you need to set 'start': 'npm run development' in package.json?"
   );
 }
 
-// Start the listener!
+// Start server
 const listener = app.listen(port, () => {
-  console.log("❇️ Express server is running on port", listener.address().port);
+  console.log(
+    "❇️ Express server is running on port",
+    listener.address().port
+  );
 });
